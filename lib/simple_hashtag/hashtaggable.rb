@@ -6,7 +6,9 @@ module SimpleHashtag
       has_many :hashtaggings, as: :hashtaggable,  class_name: "SimpleHashtag::Hashtagging", dependent: :destroy
       has_many :hashtags, through: :hashtaggings, class_name: "SimpleHashtag::Hashtag"
 
-      before_save :update_hashtags
+      before_save :update_hashtags, if: -> (record) {
+        record.attribute_changed? record.class.hashtaggable_attribute
+      }
 
       def hashtaggable_content
         self.class.hashtaggable_attribute # to ensure it has been called at least once
